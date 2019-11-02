@@ -2,13 +2,18 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Gateway extends Model {
+
+
+class Gateway extends Model
+{
 
     use \Illuminate\Database\Eloquent\SoftDeletes;
+//    use \Askedio\SoftCascade\Traits\SoftCascadeTrait;
 
     protected $fillable = ["gw_id", "lat", "long", "freq", "nombre"];
 
-    protected $dates = [];
+    protected $dates = ['deleted_at'];
+//    protected $softCascade = ['nodos'];
 
     public static $rules = [
         "gw_id" => "required|min:8",
@@ -16,8 +21,15 @@ class Gateway extends Model {
         "nombre" => "string|min:3|max:300",
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     // Relationships
+
+    public function nodos()
+    {
+        return $this->hasMany(Nodo::class, 'gw_id', 'gw_id');
+    }
+
+
 
 }

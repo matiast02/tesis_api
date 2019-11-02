@@ -26,6 +26,8 @@ $app = new Laravel\Lumen\Application(
  $app->withEloquent();
 
 $app->register(App\Providers\AppServiceProvider::class);
+$app->register(Askedio\SoftCascade\Providers\LumenServiceProvider::class);
+$app->register(Hotfix\Datatables\DatatablesServiceProvider::class);
 
 
 /*
@@ -60,9 +62,9 @@ $app->singleton(
 |
 */
 
-// $app->middleware([
-//     App\Http\Middleware\ExampleMiddleware::class
-// ]);
+ $app->middleware([
+     App\Http\Middleware\CorsMiddleware::class
+ ]);
 
 // $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,
@@ -82,6 +84,7 @@ $app->singleton(
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+
 
 /*
 |--------------------------------------------------------------------------

@@ -11,8 +11,8 @@ class CreateGatewaysTable extends Migration
         Schema::create('Gateways', function(Blueprint $table) {
             $table->increments('id');
             $table->string('gw_id',50)->unique();
-            $table->decimal('lat',10,8);
-            $table->decimal('long',10,8);
+            $table->decimal('lat',16,14)->default(0.00000);
+            $table->decimal('long',16,14)->default(0.00000);
             $table->integer('freq')->unsigned();
             $table->string('nombre',300);
             // Constraints declaration
