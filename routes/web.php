@@ -15,10 +15,21 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+$router->post('login', 'LoginController@login');
+$router->post('register', 'RegisterController@register');
+
+// aplicamos el middleware auth
+$router->group(['middleware' => 'auth'], function () use ($router) {
+
+    // aqui van todas las rutas que se necesitar estar autenticado para el acceso
+    $router->post('logout', 'LoginController@logout');
+});
+
+
 /**
  * Routes for resource gateway
  */
-$router->get('gateway/datatables','GatewaysController@datatables');
+$router->get('gateway/datatables', 'GatewaysController@datatables');
 $router->get('gateway', 'GatewaysController@all');
 $router->get('gateway/{id}', 'GatewaysController@get');
 $router->post('gateway', 'GatewaysController@add');
@@ -31,6 +42,7 @@ $router->delete('gateway/{id}', 'GatewaysController@remove');
 /**
  * Routes for resource nodo
  */
+$router->get('nodos/datatables', 'NodosController@datatables');
 $router->get('nodo', 'NodosController@all');
 $router->get('nodo/{id}', 'NodosController@get');
 $router->post('nodo', 'NodosController@add');
@@ -41,11 +53,12 @@ $router->get('measures/{src}', 'NodosController@measures');
 $router->get('nodo/coMeasure24/{id}', 'NodosController@coMeasure24');
 $router->get('nodo/promedio8hs/{id}', 'NodosController@promedio8hs');
 $router->get('nodo/semanal/{id}', 'NodosController@semanal');
+$router->get('nodo/historial/{id}', 'NodosController@historial');
 
 
 
-$router->get('count/total','NodosController@countTotal');
+$router->get('count/total', 'NodosController@countTotal');
 
 /**
-* Users routes
-**/
+ * Users routes
+ **/
