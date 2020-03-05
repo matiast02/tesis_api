@@ -22,6 +22,7 @@ $router->post('register', 'RegisterController@register');
 $router->group(['middleware' => 'auth'], function () use ($router) {
 
     // aqui van todas las rutas que se necesitar estar autenticado para el acceso
+    $router->get('nodo-editable', 'NodosController@allEditable');
     $router->post('logout', 'LoginController@logout');
 });
 

@@ -1,4 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
 
 use App\Gateway;
 use Illuminate\Auth\Access\Gate;
@@ -6,7 +8,8 @@ use Illuminate\Http\Response;
 use DB;
 
 
-class GatewaysController extends Controller {
+class GatewaysController extends Controller
+{
 
     const MODEL = "App\Gateway";
 
@@ -15,7 +18,7 @@ class GatewaysController extends Controller {
     public function remove($id)
     {
         $m = self::MODEL;
-        if(is_null($m::find($id))){
+        if (is_null($m::find($id))) {
             return $this->respond(Response::HTTP_NOT_FOUND);
         }
 
@@ -35,14 +38,47 @@ class GatewaysController extends Controller {
     }
 
 
-    public function datatables(){
+    public function datatables()
+    {
         $m = self::MODEL;
 
         $gateways = $m::all();
-//        return DataTable()->of($gateways)->toJson();
+        //        return DataTable()->of($gateways)->toJson();
         return response()->json($gateways);
     }
 
-    use RESTActions;
 
+    public function all()
+    {
+        $m = self::MODEL;
+        DB::statement("SET sql_mode = '' "); // si da error en group by
+        $gateways = DB::table('gateways')->get();
+        $gatewayss = collect($gateways)->map(function ($gateway) {
+            $gateway->formEditar = "<p>
+                                <h5><b>" . $gateway->nombre . "</b>
+                                </h5>
+                            </p>
+                            <p>Frecuencia:" . $gateway->freq . "</p>
+                            <input type='hidden' id='nodo_id' value='" . $gateway->id . "' />
+                            <input type='hidden' id='gw_id' value='" . $gateway->gw_id . "' />
+                            <input type='hidden' id='tipo_nodo' value='sensor' />
+                            <p><i class='glyphicon glyphicon-eye-open'></i>
+                            <a href='./gateway/" . $gateway->id . "'> Ver</a></p>
+                            <p>
+                                <button type='button' class='btn btn-info btn-labeled btn-lg legitRipple'  data-toggle='modal' data-target='#modal_form_edit'>
+                                    <b><i class='glyphicon glyphicon-pencil'></i></b> Editar
+                                </button>
+                            </p>
+                            <p>
+                                <button type='button' class='btn btn-danger btn-labeled btn-lg legitRipple'  onclick='clearMarkers();'>
+                                    <b><i class='glyphicon glyphicon-remove'></i></b> Eliminar
+                                </button>
+                            </p>";
+            return $gateway;
+        });
+        return response()->json($gatewayss, 200);
+        // return $this->respond(Response::HTTP_OK, $nodos);
+    }
+
+    use RESTActions;
 }

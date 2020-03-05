@@ -185,14 +185,55 @@ class NodosController extends Controller
 
         return response()->json($total, 200);
     }
-
+    //si es un usuario no logueado muestra los nodos pero no el formulario de edicion
     public function all()
     {
         $m = self::MODEL;
         DB::statement("SET sql_mode = '' "); // si da error en group by
         $nodos = DB::table('nodos')->groupBy('src')->get();
-        return response()->json($nodos, 200);
-        return $this->respond(Response::HTTP_OK, $nodos);
+        $nodoss = collect($nodos)->map(function ($nodo) {
+            $nodo->formEditar = "<p>
+                                <h5><b>" . $nodo->nombre . "</b>
+                                </h5>
+                            </p>
+                            <p>Frecuencia:" . $nodo->freq . "</p>
+                            <input type='hidden' id='nodo_id' value='" . $nodo->id . "' />
+                            <input type='hidden' id='gw_id' value='" . $nodo->gw_id . "' />
+                            <input type='hidden' id='tipo_nodo' value='sensor' />
+                            <p><i class='glyphicon glyphicon-eye-open'></i><a href='./nodo.html?id=" . $nodo->id . "'>Ver</a></p>";
+            return $nodo;
+        });
+        return response()->json($nodoss, 200);
+    }
+
+    public function allEditable()
+    {
+        $m = self::MODEL;
+        DB::statement("SET sql_mode = '' "); // si da error en group by
+        $nodos = DB::table('nodos')->groupBy('src')->get();
+        $nodoss = collect($nodos)->map(function ($nodo) {
+            $nodo->formEditar = "<p>
+                                <h5><b>" . $nodo->nombre . "</b>
+                                </h5>
+                            </p>
+                            <p>Frecuencia:" . $nodo->freq . "</p>
+                            <input type='hidden' id='nodo_id' value='" . $nodo->id . "' />
+                            <input type='hidden' id='gw_id' value='" . $nodo->gw_id . "' />
+                            <input type='hidden' id='tipo_nodo' value='sensor' />
+                            <p><i class='glyphicon glyphicon-eye-open'></i><a href='./nodo.html?id=" . $nodo->id . "'>Ver</a></p>
+                            <p>
+                                <button type='button' class='btn btn-info btn-labeled btn-lg legitRipple'  data-toggle='modal' data-target='#modal_form_edit'>
+                                    <b><i class='glyphicon glyphicon-pencil'></i></b> Editar
+                                </button>
+                            </p>
+                            <p>
+                                <button type='button' class='btn btn-danger btn-labeled btn-lg legitRipple'  onclick='clearMarkers();'>
+                                    <b><i class='glyphicon glyphicon-remove'></i></b> Eliminar
+                                </button>
+                            </p>";
+            return $nodo;
+        });
+        return response()->json($nodoss, 200);
     }
 
     public function lastMeasure(Request $request)

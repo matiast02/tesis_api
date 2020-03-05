@@ -21,7 +21,7 @@ class LoginController extends Controller
     public function login(Request $req)
     {
         // validacion del request	
-        $this->validate($req, [
+        $validate = $this->validate($req, [
             'email' => 'email|required',
             'password' => 'required'
         ]);
@@ -30,7 +30,7 @@ class LoginController extends Controller
         $user = User::where('email', $req->input('email'))->first();
 
         if (empty($user)) {
-            return response()->json(['status' => 'fail', 'message' => 'Datos erroneos'], 401);
+            return response()->json(['status' => 'fail', 'message' => 'Los datos son incorrectos'], 401);
         }
         // return response()->json(['password' => $user->password, 'pass hash' => Hash::make($req->input('password'))]);
         // verificaion de contraseña
@@ -46,10 +46,10 @@ class LoginController extends Controller
             $user->save();
 
             // retornamos el api_token, para futuras peticiones
-            return response()->json(['status' => 'success', 'api_token' => $api_token]);
+            return response()->json(['status' => 'success', 'api_token' => $api_token, 'user' => $user->name]);
         } else {
 
-            return response()->json(['status' => 'fail'], 401);
+            return response()->json(['status' => 'fail', 'message' => 'Los datos son incorrectos'], 401);
         }
     }
 
