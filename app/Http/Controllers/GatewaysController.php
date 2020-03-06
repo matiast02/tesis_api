@@ -63,6 +63,28 @@ class GatewaysController extends Controller
                             <input type='hidden' id='gw_id' value='" . $gateway->gw_id . "' />
                             <input type='hidden' id='tipo_nodo' value='sensor' />
                             <p><i class='glyphicon glyphicon-eye-open'></i>
+                            <a href='./gateway/" . $gateway->id . "'> Ver</a></p>";
+            return $gateway;
+        });
+        return response()->json($gatewayss, 200);
+        // return $this->respond(Response::HTTP_OK, $nodos);
+    }
+
+    public function allEditable()
+    {
+        $m = self::MODEL;
+        DB::statement("SET sql_mode = '' "); // si da error en group by
+        $gateways = DB::table('gateways')->get();
+        $gatewayss = collect($gateways)->map(function ($gateway) {
+            $gateway->formEditar = "<p>
+                                <h5><b>" . $gateway->nombre . "</b>
+                                </h5>
+                            </p>
+                            <p>Frecuencia:" . $gateway->freq . "</p>
+                            <input type='hidden' id='nodo_id' value='" . $gateway->id . "' />
+                            <input type='hidden' id='gw_id' value='" . $gateway->gw_id . "' />
+                            <input type='hidden' id='tipo_nodo' value='sensor' />
+                            <p><i class='glyphicon glyphicon-eye-open'></i>
                             <a href='./gateway/" . $gateway->id . "'> Ver</a></p>
                             <p>
                                 <button type='button' class='btn btn-info btn-labeled btn-lg legitRipple'  data-toggle='modal' data-target='#modal_form_edit'>
@@ -77,8 +99,23 @@ class GatewaysController extends Controller
             return $gateway;
         });
         return response()->json($gatewayss, 200);
-        // return $this->respond(Response::HTTP_OK, $nodos);
     }
+
+
+    public function get($id)
+    {
+        $m = self::MODEL;
+
+        $gateway = Gateway::find($id);
+        
+        if (empty($gateway)) {
+            return response()->json(['error' => "Gateway no encontrado"], 422);
+        }
+        $nodos = $gateway->nodos;
+        
+        return response()->json(['gateway' => $gateway]);
+    }
+
 
     use RESTActions;
 }
