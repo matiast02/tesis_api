@@ -1,3 +1,5 @@
+## En caso de requerir el gateway descargar de https://github.com/matiast02/lora_gateway
+
 # Lumen PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
